@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @Service
 public class OfferApiService {
@@ -32,7 +33,7 @@ public class OfferApiService {
 	  @Value("${offer.retriever.url}")
 	  private String offerRetrieverURL;
 
-	  
+	  @CircuitBreaker(name = "offer-composer-cb")
 	  public OffersList composerOffer(SearchCriteria searchCriteria, String transactionId)
 		      throws ApiException {
 		    return ResponseUtil.process(
@@ -46,7 +47,7 @@ public class OfferApiService {
 		        "Offer Create. ");
 		  }
 
-	  
+	  @CircuitBreaker(name = "offer-retriever-cb")
 	  public OffersList retrieveOffer(String offerId, String transactionId) throws ApiException {
 	    return ResponseUtil.process(
 	    		OffersList.class,
